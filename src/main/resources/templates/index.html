@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title></title>
+</head>
+<body>
+<div class="container bg-transparent">
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <th:block th:each="msg : ${messages}">
+                <h1 class="text-center text-info" th:text="${msg}"></h1>
+            </th:block>
+            <br/>
+            <br/>
+            <h1 class="text-center">
+                <a href="/default-users" class="btn btn-success text-center" role="button">Войти</a>
+            </h1>
+
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script src="webjars/jquery/3.5.1/jquery.min.js"></script>
+<script src="webjars/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+</html>

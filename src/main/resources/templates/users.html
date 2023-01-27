@@ -1,0 +1,531 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Admin panel</title>
+</head>
+<body>
+<!-- Сюда вставляем HTML-код -->
+<div class="container-fluid bg-dark pt-3">
+    <div class="row">
+        <div class="col-11">
+            <p><span class="h4 text-white font-weight-bold" th:text="${us.getUsername()}"></span>
+                <span class="h4 text-white font-weight-normal"
+                      th:text="${' with roles: ' + us.getRolesAsString()}"></span>
+            </p>
+        </div>
+        <div class="col" th:insert="logout :: header_fragment">
+
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid pt-2">
+    <div class="row">
+        <div class="col-2">
+            <nav class="nav nav-pills flex-column">
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a class="nav-link active" href="#">Admin</a>
+                </div>
+
+                <a class="nav-link" th:href="@{user}">User</a>
+            </nav>
+        </div>
+        <div class="col text-center bg-light">
+            <h1 class="text-left">Admin panel</h1>
+
+            <!--            TABS-->
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="label1" data-toggle="tab"
+                       href="#all-users" aria-controls="all-users" role="tab"
+                       aria-selected="true"
+                    >Users table</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="label2" data-toggle="tab"
+                       href="#new-user" aria-controls="new-user" role="tab"
+                       aria-selected="false"
+                    >New user</a>
+                </li>
+            </ul>
+            <!--                TABS END-->
+
+            <!--                TABS CONTENT-->
+            <div class="tab-content">
+
+                <!--                USERS TABLE-->
+                <div class="tab-pane active" id="all-users" role="tabpanel" aria-labelledby="label1">
+                    <h3 class="text-left">All users</h3>
+                    <table id="users_table" class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Surname</th>
+                            <th scope="col">Age</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Edit</th>
+                            <th scope="col">Delete</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th scope="row"></th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+
+                        </tbody>
+                    </table>
+                </div>
+                <!--                    USERS TABLE END-->
+
+                <!--                    NEW USER-->
+                <div class="tab-pane" id="new-user" role="tabpanel" aria-labelledby="label2">
+                    <h3 class="text-left">Add new user</h3>
+                    <div class="row bg-white justify-content-center">
+                        <div class="col-4">
+                            <form id="add-user" name="add-user" class="text-center font-weight-bold" th:method="POST"
+                                  th:action="@{/admin/add-user}" th:object="${userUpdate}">
+                                <div class="form-group">
+                                    <label for="n_name">Name</label>
+                                    <input type="text"
+                                           name="name"
+                                           value="name"
+                                           class="form-control" id="n_name">
+                                    <label for="n_surname">Surname</label>
+                                    <input type="text"
+                                           name="surname"
+                                           value="surname"
+                                           class="form-control" id="n_surname">
+                                    <label for="n_age">Age</label>
+                                    <input type="number"
+                                           name="age"
+                                           value="0"
+                                           class="form-control" id="n_age">
+                                    <label for="n_email">Email</label>
+                                    <input type="email"
+                                           name="username"
+                                           value="email@mail.ru"
+                                           class="form-control" id="n_email">
+                                    <label for="n_password">Password</label>
+                                    <input type="password"
+                                           name="password"
+                                           value="password"
+                                           class="form-control" id="n_password">
+
+                                    <label for="n_role">Role</label>
+                                    <select class="custom-select" multiple size="2" id="n_role" name="role">
+                                        <option th:each="role : ${roles}" th:value="${role.getName()}"
+                                                th:selected="${role.getName() == 'ROLE_USER'}"
+                                                th:utext="${role.getRuName()}"
+                                        >Пользователь
+                                        </option>
+
+                                    </select>
+
+
+                                </div>
+
+                                <button type="submit" class="btn btn-success">Add new user</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+                <!--                    NEW USER END-->
+            </div>
+            <!--                    TABS CONTENT END-->
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Bootstrap 4 Modal -->
+<div th:each="user : ${users}">
+
+    <div class="modal fade" th:id="modaledit" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit User</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row justify-content-center">
+                        <div class="col-6">
+                            <form id="formedit" name="formedit"class="text-center font-weight-bold"
+                                  th:method="PATCH"
+                                  th:action="@{admin/update/{id}(id=${user.getId()})}" th:object="${userUpdate}">
+                                <div class="form-group">
+                                    <label for="id">ID</label>
+                                    <input type="number"
+                                           name="id"
+                                           class="form-control" id="id" readonly>
+                                    <label for="name">Name</label>
+                                    <input type="text"
+                                           name="name"
+                                           class="form-control" id="name">
+                                    <label for="surname">Surname</label>
+                                    <input type="text"
+                                           name="surname"
+                                           class="form-control" id="surname">
+                                    <label for="age">Age</label>
+                                    <input type="number"
+                                           name="age"
+                                           class="form-control" id="age">
+                                    <label for="email">Email</label>
+                                    <input type="email"
+                                           name="username"
+                                           class="form-control" id="email">
+                                    <label for="password">Password</label>
+                                    <input type="password"
+                                           name="password"
+                                           class="form-control" id="password">
+
+                                    <label for="role">Role</label>
+                                    <select class="custom-select" multiple size="2" id="role" name="role">
+                                        <option th:each="role : ${roles}" th:value="${role.getName()}"
+                                                th:selected="${role.getName() == 'ROLE_USER'}"
+                                                th:utext="${role.getRuName()}"
+                                        >Пользователь
+                                        </option>
+
+                                    </select>
+
+
+                                </div>
+
+                                <!--                                <button type="submit" class="btn btn-primary">Submit</button>-->
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button id="edit_btn" type="submit" class="btn btn-primary" form="formedit">Edit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modaldelete" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete User</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form name="formdelete" id="formdelete" class="text-center font-weight-bold" th:method="DELETE"
+                          th:action="@{admin/delete/{id}(id=${user.getId()})}">
+                        <div class="form-group">
+                            <label for="d_id">ID</label>
+                            <input type="number"
+                                   class="form-control" id="d_id" name="userid" readonly>
+                            <label for="d_name">Name</label>
+                            <input type="text"
+                                   class="form-control" id="d_name" name="name" readonly>
+                            <label for="d_surname">Surname</label>
+                            <input type="text"
+                                   class="form-control" id="d_surname" name="surname" readonly>
+                            <label for="d_age">Age</label>
+                            <input type="number"
+                                   class="form-control" id="d_age" name="age" readonly>
+                            <label for="d_email">Email</label>
+                            <input type="email"
+                                   class="form-control" id="d_email" name="username" readonly>
+
+                            <label for="d_role">Role</label>
+                            <select class="custom-select" multiple size="2" id="d_role" readonly>
+                                <option th:each="role : ${roles}" th:value="${role.getName()}"
+                                        th:selected="${role.getName() == 'ROLE_USER'}"
+                                        th:utext="${role.getRuName()}"
+                                >Пользователь
+                                </option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button id="del_btn" type="submit" class="btn btn-danger" form="formdelete">delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="webjars/jquery/3.5.1/jquery.min.js"></script>
+<script src="webjars/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Сюда вставляем код на JavaScript
+
+    // Add user begin---------------------------------------------------------------------
+
+    async function sendData(data) {
+        let url = "http://localhost:8080/admin/users";
+        return await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: data,
+        })
+    }
+
+    function formToJOSN(formNode) {
+
+        let data = new Object();
+        data.name = formNode.elements.name.value;
+        data.surname = formNode.elements.surname.value;
+        data.age = formNode.elements.age.value;
+        data.username = formNode.elements.username.value;
+        data.password = formNode.elements.password.value;
+        data.strRoles = Array.from(formNode.elements.role.options)
+            .filter(option => option.selected)
+            .map(option => option.value);
+
+        let json = JSON.stringify(data)
+        return json;
+    }
+
+    const applicantForm = document.querySelector('#add-user');
+    applicantForm.addEventListener('submit', handleFormSubmit, false);
+
+    function handleFormSubmit(event) {
+        // Просим форму не отправлять данные самостоятельно
+        event.preventDefault();
+        console.log('Отправка!');
+
+        const data = formToJOSN(event.target);
+        console.log('handleFormSubmit: ')
+        console.log(data);
+        const response = sendData(data);
+
+        deleteTable();
+        sleep(250);
+        loadUsers();
+
+        $('#label1').tab('show');
+    }
+
+    // Add user end---------------------------------------------------------------------
+
+    function deleteTable() {
+        let table = document.querySelector('#users_table');
+        console.log('Столбцы')
+        console.log(table.rows.length);
+        let size = table.rows.length
+        for (let i = 0; i < size - 1; i++) {
+            table.deleteRow(1);
+        }
+    }
+
+
+    loadUsers();
+    function loadUsers() {
+        let url = "http://localhost:8080/admin/all_users";
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                createTable(data);
+            });
+    }
+
+    // Create table begin---------------------------------------------------------------------
+
+    function createTable(users) {
+        let table = document.querySelector('#users_table');
+
+        console.log(users.length);
+        for (let i = 0; i < users.length; i++) {
+            createRow(users[i], table, i);
+        }
+    }
+
+    function createRow(user, table, i) {
+        table.insertRow(i + 1);
+        table.rows[i + 1].insertCell(0).innerHTML = "<span style='font-weight: bold'>" + user.id + "</span>";
+        table.rows[i + 1].insertCell(1).innerHTML = user.name;
+        table.rows[i + 1].insertCell(2).innerHTML = user.surname;
+        table.rows[i + 1].insertCell(3).innerHTML = user.age;
+        table.rows[i + 1].insertCell(4).innerHTML = user.username;
+        table.rows[i + 1].insertCell(5).innerHTML = user.rolesAsString;
+
+        let e_button = document.createElement("button");
+        e_button.id = 'e_button' + user.id;
+        e_button.value = 'Edit';
+        e_button.type = "button";
+        e_button.className = "btn btn-info";
+        e_button.name = "Edit";
+        e_button.textContent = 'Edit';
+        table.rows[i + 1].insertCell(6).appendChild(e_button);
+        e_button.addEventListener("click", () => openEditWindow(user));
+
+        let d_button = document.createElement("button");
+        d_button.id = 'd_button' + user.id;
+        d_button.value = 'Edit';
+        d_button.type = "button";
+        d_button.className = "btn btn-danger";
+        d_button.name = "Delete";
+        d_button.textContent = 'Delete';
+        table.rows[i + 1].insertCell(7).appendChild(d_button);
+
+        d_button.addEventListener("click", () => openDeleteWindow(user));
+    }
+
+    // Create table end---------------------------------------------------------------------
+
+
+    // User edit begin---------------------------------------------------------------------
+
+    function openEditWindow(user) {
+
+        let form = document.forms.formedit;
+        console.log(form.elements.name);
+        form.elements.id.value = user.id;
+        form.elements.name.value = user.name;
+        form.elements.surname.value = user.surname;
+        form.elements.age.value = user.age;
+        form.elements.username.value = user.username;
+
+        $('#modaledit').modal('show');
+
+        let edit_button = document.querySelector('#edit_btn');
+        edit_button.addEventListener("click", handleEdit, false);
+
+        function handleEdit(event) {
+            // Просим форму не отправлять данные самостоятельно
+            event.preventDefault();
+            console.log('Edit');
+            let table = document.querySelector('#users_table')
+            let form = document.forms.formedit;
+
+            // let data = new Object();
+            user.id = form.elements.id.value;
+            user.name = form.elements.name.value;
+            user.surname = form.elements.surname.value;
+            user.age = form.elements.age.value;
+            user.username = form.elements.username.value;
+            user.password = form.elements.password.value;
+            user.strRoles = Array.from(form.elements.role.options)
+                .filter(option => option.selected)
+                .map(option => option.value);
+            user.rolesAsString = "";
+            for (let i = 0; i < user.strRoles.length; i++) {
+                user.rolesAsString = user.rolesAsString
+                    + user.strRoles[i].slice(5, user.strRoles[i].length) + " ";
+            }
+
+            for (let i = 1; i < table.rows.length; i++) {
+                if (table.rows[i].cells[0].textContent == form.elements.id.value) {
+                    editRow(user, i);
+                    break;
+                }
+            }
+
+            let json = JSON.stringify(user);
+            let url = "http://localhost:8080/admin/users/" + form.elements.id.value;
+
+            fetch(url, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: json
+            })
+
+            $('#modaledit').modal('hide');
+
+        }
+
+        function editRow(user, i) {
+            let table = document.querySelector('#users_table');
+            table.rows[i].cells[1].innerHTML = user.name;
+            table.rows[i].cells[2].innerHTML = user.surname;
+            table.rows[i].cells[3].innerHTML = user.age;
+            table.rows[i].cells[4].innerHTML = user.username;
+            table.rows[i].cells[5].innerHTML = user.rolesAsString;
+        }
+    }
+
+    // User edit end---------------------------------------------------------------------
+
+
+    // User delete begin---------------------------------------------------------------------
+
+    function openDeleteWindow(user) {
+        console.log('openDeleteWindow');
+        console.log(user.id)
+
+        let form = document.forms.formdelete;
+        console.log(form.elements.name);
+        form.elements.userid.value = user.id;
+        form.elements.name.value = user.name;
+        form.elements.surname.value = user.surname;
+        form.elements.age.value = user.age;
+        form.elements.username.value = user.username;
+
+        $('#modaldelete').modal('show');
+
+        let del_button = document.querySelector('#del_btn');
+        del_button.addEventListener("click", handleDelete, false);
+    }
+
+    function handleDelete(event) {
+        // Просим форму не отправлять данные самостоятельно
+        event.preventDefault();
+        console.log('Delete!');
+        let table = document.querySelector('#users_table')
+        let form = document.forms.formdelete;
+        for (let i = 1; i < table.rows.length; i++) {
+            if (table.rows[i].cells[0].textContent == form.elements.userid.value) {
+                table.deleteRow(i);
+                break;
+            }
+        }
+
+        let url = "http://localhost:8080/admin/users/" + form.elements.userid.value;
+        console.log(url);
+        fetch(url, { method: 'DELETE' });
+        $('#modaldelete').modal('hide');
+
+    }
+    // User delete end---------------------------------------------------------------------
+
+
+    function sleep(milliseconds) {
+        const date = Date.now();
+        let currentDate = null;
+        do {
+            currentDate = Date.now();
+        } while (currentDate - date < milliseconds);
+    }
+    console.log('Привет, мир!');
+    console.log('jQuery v' + $.fn.jquery);
+    console.log('Bootstrap v' + $.fn.tooltip.Constructor.VERSION);
+</script>
+</body>
+</html>

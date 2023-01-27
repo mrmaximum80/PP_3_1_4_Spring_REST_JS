@@ -1,0 +1,115 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>User panel</title>
+</head>
+<body>
+<!-- Сюда вставляем HTML-код -->
+<div class="container-fluid bg-dark pt-3">
+    <div class="row">
+        <div class="col-11">
+            <p><span class="h4 text-white font-weight-bold" th:text="${this_user.getUsername()}"></span>
+                <span class="h4 text-white font-weight-normal"
+                      th:text="${' with roles: ' + this_user.getRolesAsString()}"></span>
+            </p>
+        </div>
+        <div class="col" th:insert="logout :: header_fragment">
+
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid pt-2">
+    <div class="row">
+        <div class="col-2">
+            <nav class="nav nav-pills flex-column">
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a class="nav-link" th:href="@{admin}">Admin</a>
+                </div>
+
+                <a class="nav-link active" href="#">User</a>
+            </nav>
+        </div>
+        <div class="col text-center bg-light">
+            <h1 class="text-left">User information-page</h1>
+
+            <!--                USER TABLE-->
+            <h3 class="text-left">About user</h3>
+
+            <table id="user_table" class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Surname</th>
+                    <th scope="col">Age</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Role</th>
+                </tr>
+                </thead>
+                <tbody>
+<!--                <tr>-->
+<!--                    <th th:utext=" ${this_user.getId()}" scope="col"></th>-->
+<!--                    <td th:utext=" ${this_user.getName()}"></td>-->
+<!--                    <td th:utext=" ${this_user.getSurname()}"></td>-->
+<!--                    <td th:utext=" ${this_user.getAge()}"></td>-->
+<!--                    <td th:utext=" ${this_user.getUsername()}"></td>-->
+<!--                    <td th:utext="${this_user.getRolesAsString()}"></td>-->
+<!--                </tr>-->
+
+                <tr>
+                    <th th:text="${this_user.getId()}" scope="col"></th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!--                    USER TABLE END-->
+
+        </div>
+    </div>
+</div>
+
+
+<script src="webjars/jquery/3.5.1/jquery.min.js"></script>
+<script src="webjars/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Сюда вставляем код на JavaScript
+
+
+        let table = document.querySelector('#user_table');
+        let url = "http://localhost:8080/user/" + table.rows[1].cells[0].outerText;
+        const user1 = fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                makeRow(data);
+            });
+
+    function makeRow (user) {
+        let table = document.querySelector('#user_table');
+        table.rows[1].cells[0].innerHTML = "<span style='font-weight: bold'>" + user.id + "</span>";
+        table.rows[1].cells[1].innerHTML = user.name;
+        table.rows[1].cells[2].innerHTML = user.surname;
+        table.rows[1].cells[3].innerHTML = user.age;
+        table.rows[1].cells[4].innerHTML = user.username;
+        table.rows[1].cells[5].innerHTML = user.rolesAsString;
+
+    }
+
+    console.log('Привет, мир!');
+    console.log('jQuery v' + $.fn.jquery);
+    console.log('Bootstrap v' + $.fn.tooltip.Constructor.VERSION);
+</script>
+</body>
+</html>
