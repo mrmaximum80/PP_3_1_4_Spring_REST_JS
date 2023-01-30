@@ -139,33 +139,30 @@ function openEditWindow(user) {
         let table = document.querySelector('#users_table')
         let form = document.forms.formedit;
 
-        let data = new Object();
-        data.id = form.elements.id.value;
-        data.name = form.elements.name.value;
-        data.surname = form.elements.surname.value;
-        data.age = form.elements.age.value;
-        data.username = form.elements.username.value;
-        data.password = form.elements.password.value;
-        data.strRoles = Array.from(form.elements.role.options)
+        // let data = new Object();
+        user.id = form.elements.id.value;
+        user.name = form.elements.name.value;
+        user.surname = form.elements.surname.value;
+        user.age = form.elements.age.value;
+        user.username = form.elements.username.value;
+        user.password = form.elements.password.value;
+        user.strRoles = Array.from(form.elements.role.options)
             .filter(option => option.selected)
             .map(option => option.value);
-        data.rolesAsString = "";
-        for (let i = 0; i < data.strRoles.length; i++) {
-            data.rolesAsString = data.rolesAsString
-                + data.strRoles[i].slice(5, data.strRoles[i].length) + " ";
+        user.rolesAsString = "";
+        for (let i = 0; i < user.strRoles.length; i++) {
+            user.rolesAsString = user.rolesAsString
+                + user.strRoles[i].slice(5, user.strRoles[i].length) + " ";
         }
 
         for (let i = 1; i < table.rows.length; i++) {
             if (table.rows[i].cells[0].textContent == form.elements.id.value) {
-                editRow(data, i);
+                editRow(user, i);
                 break;
             }
         }
 
-        let json = JSON.stringify(data);
-        console.log(data)
-        console.log(json);
-
+        let json = JSON.stringify(user);
         let url = "http://localhost:8080/admin/users/" + form.elements.id.value;
 
         fetch(url, {

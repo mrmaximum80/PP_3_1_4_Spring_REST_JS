@@ -19,15 +19,17 @@ public class HelloController {
         this.userService = userService;
     }
 
+//    Начальная страница
     @GetMapping(value = "/")
     public String printWelcome(ModelMap model) {
         List<String> messages = new ArrayList<>();
         messages.add("Hello! People!");
-        messages.add("I'm Spring Bootstrap application!");
+        messages.add("I'm Spring REST JS application!");
         model.addAttribute("messages", messages);
         return "index";
     }
 
+//    Создаем дефолтную таблицу пользователей
     @GetMapping("/default-users")
     public String defaultUsers() {
         userService.defaultUsers();

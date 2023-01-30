@@ -26,9 +26,4 @@ public class UserController {
         return "user";
     }
 
-//    @GetMapping("/{id}")
-//    public String printUser(@PathVariable("id") long id, ModelMap model) {
-//        model.addAttribute("this_user", userService.getUser(id));
-//        return "user";
-//    }
 }

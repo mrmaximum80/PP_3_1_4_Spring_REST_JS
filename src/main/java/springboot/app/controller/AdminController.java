@@ -31,32 +31,4 @@ public class AdminController {
         return "users";
     }
 
-    @PostMapping("/add-user")
-    public String addUser(@ModelAttribute("userUpdate") User user) {
-        // Добаляем роли и шифруем пароль
-        User cryptedUser = userService.encodeUserPassword(user);
-        User userWithRoles = userService.addUserRoles(cryptedUser);
-        //--------------------------------------
-        userService.saveUser(userWithRoles);
-        return "redirect:/admin";
-    }
-
-    @PatchMapping ("/update/{id}")
-    public String updateUser(@PathVariable("id") long id,
-                             @ModelAttribute("userUpdate") User user) {
-//         Добаляем роли и шифруем пароль
-        User cryptedUser = userService.encodeUserPassword(user);
-        User userWithRoles = userService.addUserRoles(cryptedUser);
-        //--------------------------------------
-
-        userService.saveUser(userWithRoles);
-        return "redirect:/admin";
-    }
-
-    @DeleteMapping ("/delete/{id}")
-    public String deleteUser(@PathVariable("id") long id) {
-        userService.deleteUser(id);
-        return "redirect:/admin";
-    }
-
 }

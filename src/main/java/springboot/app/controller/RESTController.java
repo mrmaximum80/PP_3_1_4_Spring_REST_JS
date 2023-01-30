@@ -38,12 +38,6 @@ public class RESTController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-//    @GetMapping("/user/{id}")
-//    public ResponseEntity<User> getUser(@PathVariable("id") long id) {
-//        User user = userService.getUser(id);
-//        return new ResponseEntity<User>(user, HttpStatus.OK);
-//    }
-
     @GetMapping("/user/{id}")
     public User getUser(@PathVariable("id") long id) {
         User user = userService.getUser(id);
@@ -58,7 +52,7 @@ public class RESTController {
     }
 
     @PatchMapping ("/admin/users/{id}")
-    public ResponseEntity<HttpStatus>  updateUser(@RequestBody User user) {
+    public ResponseEntity<HttpStatus> updateUser(@RequestBody User user) {
 //         Добаляем роли и шифруем пароль
         User cryptedUser = userService.encodeUserPassword(user);
         User userWithRoles = userService.addUserRoles(cryptedUser);
